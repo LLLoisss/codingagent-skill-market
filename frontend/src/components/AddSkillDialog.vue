@@ -229,29 +229,29 @@ function handleClose() {
 <style scoped>
 .upload-area {
   width: 100%;
-  border: 2px dashed #dcdfe6;
-  border-radius: 8px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
   padding: 30px 20px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.3s, background-color 0.3s;
-  background: #fafafa;
+  background: #f8fbff;
 }
 
 .upload-area:hover,
 .upload-area.drag-over {
-  border-color: #409eff;
-  background: #ecf5ff;
+  border-color: #2563eb;
+  background: #eef3ff;
 }
 
 .upload-text p {
   margin: 8px 0 0;
-  color: #606266;
+  color: #4b5563;
   font-size: 14px;
 }
 
 .upload-hint {
-  color: #909399 !important;
+  color: #6b7280 !important;
   font-size: 12px !important;
 }
 </style>
