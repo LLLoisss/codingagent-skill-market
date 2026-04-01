@@ -9,8 +9,7 @@ import { Skill } from '../types';
 const router = Router();
 
 const STORE_DIR =
-  process.env.STORE_DIR ||
-  'C:\\Users\\13135\\Desktop\\workspace\\skill-market-store';
+  process.env.STORE_DIR || path.join(process.cwd(), 'skill-market-store');
 const META_FILE = path.join(STORE_DIR, 'skills-meta.json');
 
 // Ensure store directory exists

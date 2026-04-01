@@ -198,8 +198,7 @@ body {
 }
 
 .app-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   padding: 20px 22px 28px;
   background: #ffffff;
   border: 1px solid var(--border);
@@ -208,8 +207,8 @@ body {
 }
 
 .hero {
-  max-width: 1200px;
-  margin: 0 auto 28px;
+  width: 100%;
+  margin: 0 0 28px;
   padding: 28px 28px 26px;
   border-radius: 20px;
   background: linear-gradient(140deg, #f0f4ff, #e3edff 50%, #ffffff 100%);
