@@ -35,7 +35,7 @@ function writeMeta(skills: Skill[]): void {
 // Multer config: store uploaded files to a temp dir, then move
 const upload = multer({ dest: path.join(STORE_DIR, '_temp') });
 
-// GET /api/skills - list all skills, optional ?search=keyword
+// GET /api/skills - list all skills, optional ?search=keyword&page=1&pageSize=27
 router.get('/', (_req: Request, res: Response) => {
   const skills = readMeta();
   const search = ((_req.query.search as string) || '').trim().toLowerCase();
@@ -43,12 +43,19 @@ router.get('/', (_req: Request, res: Response) => {
     ? skills.filter((s) => s.name.toLowerCase().includes(search))
     : skills;
   // Return newest first
-  res.json(
-    filtered.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    ),
+  const sorted = filtered.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  const page = Math.max(1, parseInt((_req.query.page as string) || '1', 10));
+  const pageSize = Math.max(
+    1,
+    Math.min(100, parseInt((_req.query.pageSize as string) || '27', 10)),
+  );
+  const total = sorted.length;
+  const items = sorted.slice((page - 1) * pageSize, page * pageSize);
+
+  res.json({ items, total });
 });
 
 // POST /api/skills - create a new skill with folder upload

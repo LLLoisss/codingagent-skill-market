@@ -1,13 +1,18 @@
 import axios from 'axios';
-import type { Skill } from '../types';
+import type { Skill, PaginatedResult } from '../types';
 
 const api = axios.create({
   baseURL: '/api',
 });
 
-export async function getSkills(search?: string): Promise<Skill[]> {
-  const params = search ? { search } : {};
-  const { data } = await api.get<Skill[]>('/skills', { params });
+export async function getSkills(
+  search?: string,
+  page = 1,
+  pageSize = 27,
+): Promise<PaginatedResult<Skill>> {
+  const params: Record<string, string | number> = { page, pageSize };
+  if (search) params.search = search;
+  const { data } = await api.get<PaginatedResult<Skill>>('/skills', { params });
   return data;
 }
 

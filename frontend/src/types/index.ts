@@ -12,3 +12,8 @@ export interface SkillForm {
   description: string;
   author: string;
 }
+
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+}

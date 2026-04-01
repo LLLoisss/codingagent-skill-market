@@ -6,7 +6,7 @@
         <h1>代码助手的 Skill 集市</h1>
         <p class="tagline">浏览、搜索、上传，一键打包可复用的 Agent 能力。保持轻量，也保持可靠。</p>
         <div class="hero-meta">
-          <span class="pill">已发布 {{ skills.length }} 个 Skill</span>
+          <span class="pill">已发布 {{ total }} 个 Skill</span>
           <span class="pill alt">一键下载 · 随时更新</span>
         </div>
       </div>
@@ -60,6 +60,18 @@
                      @download="handleDownload" />
         </div>
       </div>
+
+      <div class="pagination-wrap">
+        <el-pagination :current-page="currentPage"
+                       :page-size="pageSize"
+                       :total="total"
+                       :pager-count="5"
+                       :hide-on-single-page="false"
+                       layout="prev, pager, next"
+                       background
+                       @current-change="handlePageChange" />
+        <span class="pagination-total">共 {{ total }} 条数据</span>
+      </div>
     </main>
 
     <AddSkillDialog v-model="dialogVisible"
@@ -84,12 +96,21 @@ const skills = ref<Skill[]>([])
 const searchText = ref('')
 const dialogVisible = ref(false)
 const loading = ref(false)
+const currentPage = ref(1)
+const pageSize = 27
+const total = ref(0)
 let searchTimer: ReturnType<typeof setTimeout> | null = null
 
 async function fetchSkills() {
   loading.value = true
   try {
-    skills.value = await getSkills(searchText.value || undefined)
+    const result = await getSkills(
+      searchText.value || undefined,
+      currentPage.value,
+      pageSize
+    )
+    skills.value = result.items
+    total.value = result.total
   } catch {
     ElMessage.error('获取Skill列表失败')
   } finally {
@@ -100,8 +121,15 @@ async function fetchSkills() {
 function handleSearch() {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => {
+    currentPage.value = 1
     fetchSkills()
   }, 300)
+}
+
+function handlePageChange(page: number) {
+  currentPage.value = page
+  fetchSkills()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const editingSkill = ref<Skill | null>(null)
@@ -417,6 +445,53 @@ body {
   min-height: 180px;
 }
 
+.pagination-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eef2f7;
+}
+
+.pagination-total {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pagination-wrap :deep(.el-pagination) {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination-wrap :deep(.btn-prev),
+.pagination-wrap :deep(.btn-next),
+.pagination-wrap :deep(.el-pager li) {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  box-shadow: none;
+}
+
+.pagination-wrap :deep(.el-pager li.is-active) {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.pagination-wrap :deep(.btn-prev:disabled),
+.pagination-wrap :deep(.btn-next:disabled) {
+  border-color: #e5e7eb;
+  background: #f9fafb;
+  color: #c0c4cc;
+}
+
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
@@ -447,6 +522,15 @@ body {
 
   .tagline {
     font-size: 14px;
+  }
+
+  .pagination-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination-total {
+    text-align: right;
   }
 }
 </style>
